@@ -132,6 +132,27 @@ namespace SolarUI
         void Draw();
         void LoadTexture();
     };
+
+    struct inputBox
+    {
+        float X, Y, W, H;
+        std::string data;
+        bool Focused;
+        bool Submitted;
+        size_t CursorPos;
+
+        inputBox(float x, float y, float w, float h)
+            : X(x), Y(y), W(w), H(h), data(""), Focused(false), Submitted(false), CursorPos(0) {}
+
+        void Draw();
+        void Update(char key);
+        void UpdateSpecial(int key);  // For arrow keys
+        bool Contains(int mx, int my);
+        void OnClick();
+        std::string Input();  // Returns data if submitted, clears submitted flag
+        void Clear();
+        bool IsSubmitted() const;
+    };
 }
 
 #endif

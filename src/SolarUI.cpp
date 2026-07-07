@@ -7,7 +7,7 @@
     Licensed under the MIT License
 */
 
-#include "SolarUI.h"
+#include <SolarUI.h>
 #include <algorithm>
 #include <iostream>
 
@@ -355,5 +355,104 @@ namespace SolarUI
 
         glBindTexture(GL_TEXTURE_2D, 0);
         glDisable(GL_TEXTURE_2D);
+    }
+
+    // **********************************************
+    // *                 INPUT BOX                 *
+    // **********************************************
+    void inputBox::Draw()
+    {
+        // background
+        glColor4f(0.1f, 0.1f, 0.1f, 1);
+
+        glBegin(GL_QUADS);
+            glVertex2f(X, Y);
+            glVertex2f(X + W, Y);
+            glVertex2f(X + W, Y + H);
+            glVertex2f(X, Y + H);
+        glEnd();
+
+        // border
+        glColor4f(Focused ? 0.8f : 0.5f, Focused ? 0.8f : 0.5f, Focused ? 0.8f : 0.5f, 1);
+        glLineWidth(2.0f);
+
+        glBegin(GL_LINE_LOOP);
+            glVertex2f(X, Y);
+            glVertex2f(X + W, Y);
+            glVertex2f(X + W, Y + H);
+            glVertex2f(X, Y + H);
+        glEnd();
+
+        glLineWidth(1.0f);
+
+        // text
+        glColor4f(1, 1, 1, 1);
+        glRasterPos2f(X + 5, Y + H * 0.6f);
+
+        for (char c : data)
+        {
+            glutBitmapCharacter(CurrentFont, c);
+        }
+    }
+
+    void inputBox::Update(char key)
+    {
+        if (!Focused)
+            return;
+
+        if (key == 13)  // Enter key
+        {
+            Submitted = true;
+            Focused = false;
+        }
+        else if (key == 8)  // Backspace
+        {
+            if (!data.empty())
+            {
+                data.pop_back();
+            }
+        }
+        else if (key >= 32 && key <= 126)  // Printable characters
+        {
+            data += key;
+        }
+    }
+
+    bool inputBox::Contains(int mx, int my)
+    {
+        return mx >= X && mx <= X + W &&
+               my >= Y && my <= Y + H;
+    }
+
+    void inputBox::OnClick()
+    {
+        if (Contains(MouseX, MouseY))
+        {
+            Focused = !Focused;
+        }
+    }
+
+    std::string inputBox::Input()
+    {
+        if (Submitted)
+        {
+            std::string result = data;
+            data.clear();
+            Submitted = false;
+            return result;
+        }
+        return "";
+    }
+
+    void inputBox::Clear()
+    {
+        data.clear();
+        Submitted = false;
+        Focused = false;
+    }
+
+    bool inputBox::IsSubmitted() const
+    {
+        return Submitted;
     }
 }
