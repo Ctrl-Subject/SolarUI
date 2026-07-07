@@ -151,6 +151,8 @@ footer{
 <a href="#label">Label</a>
 <a href="#button">Button</a>
 <a href="#slider">Slider</a>
+<a href="#checkbox">Checkbox</a>
+<a href="#image">Image</a>
 </nav>
 
 </header>
@@ -176,6 +178,8 @@ controls while remaining easy to integrate into existing projects.
 <li>Labels</li>
 <li>Buttons</li>
 <li>Sliders</li>
+<li>Checkboxes</li>
+<li>Image rendering from file paths or texture IDs</li>
 </ul>
 
 </section>
@@ -399,6 +403,81 @@ Represents a horizontal slider with a value from <b>0.0</b> to <b>1.0</b>.
 <li><b>Draw()</b> — Draws the slider.</li>
 <li><b>Update()</b> — Updates the slider value.</li>
 <li><b>Contains()</b> — Returns whether a point lies inside the slider.</li>
+</ul>
+
+</section>
+
+<section id="checkbox">
+
+<h2>Checkbox</h2>
+
+<p>
+Represents a toggleable checkbox with a simple on/off state.
+</p>
+
+<h3>Declaration</h3>
+
+<pre><code>SolarUI::Checkbox showGrid(20, 140, 18, 18, "Show Grid");</code></pre>
+
+<h3>Members</h3>
+
+<table>
+<tr>
+<th>Member</th>
+<th>Description</th>
+</tr>
+
+<tr><td>X</td><td>Horizontal position.</td></tr>
+<tr><td>Y</td><td>Vertical position.</td></tr>
+<tr><td>W</td><td>Width.</td></tr>
+<tr><td>H</td><td>Height.</td></tr>
+<tr><td>Checked</td><td>Current checked state.</td></tr>
+<tr><td>Title</td><td>Checkbox label.</td></tr>
+</table>
+
+<h3>Functions</h3>
+
+<ul>
+<li><b>Draw()</b> — Draws the checkbox.</li>
+<li><b>Update()</b> — Toggles the checkbox when clicked.</li>
+<li><b>Contains()</b> — Returns whether a point lies inside the checkbox.</li>
+</ul>
+
+</section>
+
+<section id="image">
+
+<h2>Image</h2>
+
+<p>
+Renders an image using either a preloaded OpenGL texture ID or a file path to an image on disk.
+</p>
+
+<h3>Declaration</h3>
+
+<pre><code>SolarUI::image logo(20, 220, 200, 120, "C:/Projects/image.png");</code></pre>
+
+<h3>Members</h3>
+
+<table>
+<tr>
+<th>Member</th>
+<th>Description</th>
+</tr>
+
+<tr><td>X</td><td>Horizontal position.</td></tr>
+<tr><td>Y</td><td>Vertical position.</td></tr>
+<tr><td>W</td><td>Width.</td></tr>
+<tr><td>H</td><td>Height.</td></tr>
+<tr><td>TextureID</td><td>OpenGL texture handle.</td></tr>
+<tr><td>FilePath</td><td>Path to an image file to load.</td></tr>
+</table>
+
+<h3>Functions</h3>
+
+<ul>
+<li><b>Draw()</b> — Draws the image.</li>
+<li><b>LoadTexture()</b> — Loads the image from disk if a file path is provided.</li>
 </ul>
 
 </section>
