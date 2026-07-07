@@ -10,19 +10,32 @@ SolarUI::image* img;
 
 void MouseMove(int x, int y)
 {
-    SolarUI::MouseX = static_cast<float>(x);
-    SolarUI::MouseY = static_cast<float>(y);
+    float logicalX = 0.0f;
+    float logicalY = 0.0f;
+    SolarUI::ScreenToLogical(x, y, logicalX, logicalY);
+
+    SolarUI::MouseX = logicalX;
+    SolarUI::MouseY = logicalY;
 }
 
 void MouseButton(int button, int state, int x, int y)
 {
-    SolarUI::MouseX = static_cast<float>(x);
-    SolarUI::MouseY = static_cast<float>(y);
+    float logicalX = 0.0f;
+    float logicalY = 0.0f;
+    SolarUI::ScreenToLogical(x, y, logicalX, logicalY);
+
+    SolarUI::MouseX = logicalX;
+    SolarUI::MouseY = logicalY;
 
     if (button == GLUT_LEFT_BUTTON)
     {
         SolarUI::MouseDown = (state == GLUT_DOWN);
     }
+}
+
+void Resize(int width, int height)
+{
+    SolarUI::UpdateViewport(width, height);
 }
 
 void Render()
@@ -66,16 +79,10 @@ int main(int argc, char** argv)
     glutInitWindowSize(800, 600);
     glutCreateWindow("SolarUI Test");
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluOrtho2D(0, 800, 600, 0);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
     SolarUI::Init();
 
     glutMouseFunc(MouseButton);
+    glutReshapeFunc(Resize);
     glutPassiveMotionFunc(MouseMove);
     glutMotionFunc(MouseMove);
 
