@@ -23,6 +23,14 @@ namespace SolarUI
     inline bool MouseDown = false;
     inline bool MousePressed = false;
 
+    inline int WindowWidth = 800;
+    inline int WindowHeight = 600;
+    inline float LogicalWidth = 800.0f;
+    inline float LogicalHeight = 600.0f;
+    inline float ViewScale = 1.0f;
+    inline float ViewOffsetX = 0.0f;
+    inline float ViewOffsetY = 0.0f;
+
 
     // **********************************************
     // *              GLOBAL FONT SYSTEM            *
@@ -42,6 +50,9 @@ namespace SolarUI
     int Init();
     int Update();
     int DrawFrame();
+    void SetLogicalSize(float width, float height);
+    void UpdateViewport(int width, int height);
+    void ScreenToLogical(int screenX, int screenY, float& outX, float& outY);
 
 
     // **********************************************

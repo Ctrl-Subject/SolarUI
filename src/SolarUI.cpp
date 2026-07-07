@@ -8,6 +8,7 @@
 */
 
 #include "SolarUI.h"
+#include <algorithm>
 #include <iostream>
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -47,6 +48,74 @@ namespace
 
 namespace SolarUI
 {
+    void SetLogicalSize(float width, float height)
+    {
+        LogicalWidth = (width > 0.0f) ? width : 1.0f;
+        LogicalHeight = (height > 0.0f) ? height : 1.0f;
+        UpdateViewport(WindowWidth, WindowHeight);
+    }
+
+    void UpdateViewport(int width, int height)
+    {
+        WindowWidth = width;
+        WindowHeight = height;
+
+        if (WindowWidth <= 0 || WindowHeight <= 0)
+            return;
+
+        const float scale = std::min(
+            static_cast<float>(WindowWidth) / LogicalWidth,
+            static_cast<float>(WindowHeight) / LogicalHeight);
+
+        ViewScale = scale;
+
+        const float viewWidth = LogicalWidth * scale;
+        const float viewHeight = LogicalHeight * scale;
+        ViewOffsetX = (WindowWidth - viewWidth) * 0.5f;
+        ViewOffsetY = (WindowHeight - viewHeight) * 0.5f;
+
+        glViewport(
+            static_cast<GLint>(ViewOffsetX),
+            static_cast<GLint>(ViewOffsetY),
+            static_cast<GLsizei>(viewWidth),
+            static_cast<GLsizei>(viewHeight));
+
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        gluOrtho2D(0.0, LogicalWidth, LogicalHeight, 0.0);
+
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+    }
+
+    void ScreenToLogical(int screenX, int screenY, float& outX, float& outY)
+    {
+        GLint viewport[4];
+        GLdouble modelView[16];
+        GLdouble projection[16];
+
+        glGetIntegerv(GL_VIEWPORT, viewport);
+        glGetDoublev(GL_MODELVIEW_MATRIX, modelView);
+        glGetDoublev(GL_PROJECTION_MATRIX, projection);
+
+        GLdouble worldX = 0.0;
+        GLdouble worldY = 0.0;
+        GLdouble worldZ = 0.0;
+
+        const GLdouble winX = static_cast<GLdouble>(screenX);
+        const GLdouble winY = static_cast<GLdouble>(viewport[3] - screenY);
+
+        if (gluUnProject(winX, winY, 0.0, modelView, projection, viewport, &worldX, &worldY, &worldZ) == GL_FALSE)
+        {
+            outX = static_cast<float>(screenX);
+            outY = static_cast<float>(screenY);
+            return;
+        }
+
+        outX = static_cast<float>(worldX);
+        outY = static_cast<float>(worldY);
+    }
+
     // **********************************************
     // *             CORE INPUT SYSTEM             *
     // **********************************************
@@ -56,6 +125,8 @@ namespace SolarUI
         MouseY = 0;
         MouseDown = false;
         MousePressed = false;
+
+        SetLogicalSize(800.0f, 600.0f);
 
         return 1;
     }
