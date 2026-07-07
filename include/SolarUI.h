@@ -10,6 +10,7 @@
 #define SOLAR_UI_H
 
 #include <GL/freeglut.h>
+#include <string>
 
 namespace SolarUI
 {
@@ -44,7 +45,7 @@ namespace SolarUI
 
 
     // **********************************************
-    // *                   LABEL                   *
+    // *                  ELEMENTS                  *
     // **********************************************
     struct Label
     {
@@ -57,10 +58,6 @@ namespace SolarUI
         void Draw();
     };
 
-
-    // **********************************************
-    // *                  BUTTON                   *
-    // **********************************************
     struct Button
     {
         float X, Y, W, H;
@@ -74,10 +71,6 @@ namespace SolarUI
         bool IsClicked();
     };
 
-
-    // **********************************************
-    // *                  SLIDER                   *
-    // **********************************************
     struct Slider
     {
         float X, Y, W, H;
@@ -93,6 +86,40 @@ namespace SolarUI
         void Draw();
         void Update();
         bool Contains(int mx, int my);
+    };
+
+    struct Checkbox
+    {
+        float X, Y, W, H;
+        bool Checked;
+
+        Label Title;
+
+        Checkbox(float x, float y, float w, float h, const char* text)
+            : X(x), Y(y), W(w), H(h),
+              Checked(false),
+              Title(text, x, y) {}
+
+        void Draw();
+        void Update();
+        bool Contains(int mx, int my);
+    };
+
+    struct image
+    {
+        float X, Y, W, H;
+        GLuint TextureID;
+        std::string FilePath;
+        bool TextureLoaded;
+
+        image(float x, float y, float w, float h, GLuint textureID)
+            : X(x), Y(y), W(w), H(h), TextureID(textureID), FilePath(""), TextureLoaded(true) {}
+
+        image(float x, float y, float w, float h, const char* filePath)
+            : X(x), Y(y), W(w), H(h), TextureID(0), FilePath(filePath ? filePath : ""), TextureLoaded(false) {}
+
+        void Draw();
+        void LoadTexture();
     };
 }
 
