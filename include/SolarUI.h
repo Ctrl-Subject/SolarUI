@@ -11,6 +11,8 @@
 
 #include <GL/freeglut.h>
 #include <string>
+#include <vector>
+#include <initializer_list>
 
 namespace SolarUI
 {
@@ -132,6 +134,68 @@ namespace SolarUI
         void Draw();
         void LoadTexture();
     };
+
+    struct inputBox
+    {
+        float X, Y, W, H;
+        std::string data;
+        bool Focused;
+        bool Submitted;
+        size_t CursorPos;
+
+        inputBox(float x, float y, float w, float h)
+            : X(x), Y(y), W(w), H(h), data(""), Focused(false), Submitted(false), CursorPos(0) {}
+
+        void Draw();
+        void Update(char key);
+        void UpdateSpecial(int key);  // For arrow keys
+        bool Contains(int mx, int my);
+        void OnClick();
+        std::string Input();  // Returns data if submitted, clears submitted flag
+        void Clear();
+        bool IsSubmitted() const;
+    };
+
+    struct DropdownMenu
+{
+    float X, Y, W, H;
+
+    bool Open;
+    int SelectedIndex;
+
+    Label Title;
+
+    std::vector<const char*> Options;
+
+    DropdownMenu(
+        float x,
+        float y,
+        float w,
+        float h,
+        const char* text,
+        std::initializer_list<const char*> options)
+        : X(x),
+          Y(y),
+          W(w),
+          H(h),
+          Open(false),
+          SelectedIndex(0),
+          Title(text, x, y),
+          Options(options)
+    {}
+
+    void Draw();
+    void Update();
+    bool Contains(int mx, int my);
+
+    int GetIndex() const;
+    const char* GetValue() const;
+
+    operator int() const
+    {
+        return SelectedIndex;
+    }
+};
 }
 
 #endif
