@@ -455,4 +455,125 @@ namespace SolarUI
     {
         return Submitted;
     }
+
+    bool DropdownMenu::Contains(int mx, int my)
+    {
+        return mx >= X &&
+            mx <= X + W &&
+            my >= Y &&
+            my <= Y + H;
+    }
+
+    int DropdownMenu::GetIndex() const
+    {
+        return SelectedIndex;
+    }
+
+    const char* DropdownMenu::GetValue() const
+    {
+        if (Options.empty())
+            return "";
+
+        return Options[SelectedIndex];
+    }
+
+    void DropdownMenu::Update()
+    {
+        if (MousePressed)
+        {
+            if (Contains(MouseX, MouseY))
+            {
+                Open = !Open;
+                return;
+            }
+
+            if (Open)
+            {
+                for (size_t i = 0; i < Options.size(); i++)
+                {
+                    float optionY = Y + H * (i + 1);
+
+                    if (MouseX >= X &&
+                        MouseX <= X + W &&
+                        MouseY >= optionY &&
+                        MouseY <= optionY + H)
+                    {
+                        SelectedIndex = static_cast<int>(i);
+                        Open = false;
+                        return;
+                    }
+                }
+
+                Open = false;
+            }
+        }
+    }
+
+    void DropdownMenu::Draw()
+    {
+        // Main box
+        glColor4f(0.2f,0.2f,0.2f,1);
+
+        glBegin(GL_QUADS);
+            glVertex2f(X,Y);
+            glVertex2f(X+W,Y);
+            glVertex2f(X+W,Y+H);
+            glVertex2f(X,Y+H);
+        glEnd();
+
+        // Selected text
+        glColor4f(1,1,1,1);
+        glRasterPos2f(X + 5, Y + H * 0.6f);
+
+        const char* c = GetValue();
+
+        while(*c)
+        {
+            glutBitmapCharacter(CurrentFont,*c);
+            c++;
+        }
+
+        // Dropdown arrow
+        glBegin(GL_TRIANGLES);
+
+            glVertex2f(X+W-15,Y+H*0.4f);
+            glVertex2f(X+W-5,Y+H*0.4f);
+            glVertex2f(X+W-10,Y+H*0.7f);
+
+        glEnd();
+
+        if(!Open)
+            return;
+
+        // Draw options
+        for(size_t i=0;i<Options.size();i++)
+        {
+            float optionY = Y + H * (i + 1);
+
+            glColor4f(0.15f,0.15f,0.15f,1);
+
+            glBegin(GL_QUADS);
+
+                glVertex2f(X,optionY);
+                glVertex2f(X+W,optionY);
+                glVertex2f(X+W,optionY+H);
+                glVertex2f(X,optionY+H);
+
+            glEnd();
+
+            glColor4f(1,1,1,1);
+
+            glRasterPos2f(X+5,optionY+H*0.6f);
+
+            c = Options[i];
+
+            while(*c)
+            {
+                glutBitmapCharacter(CurrentFont,*c);
+                c++;
+            }
+        }
+    }
+
+
 }
